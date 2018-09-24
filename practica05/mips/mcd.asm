@@ -1,16 +1,15 @@
-
-#Programa que calcula el maximo comun divisor de dos números.
-	
-	.data	
-a:	.word 15 	# Número a.
-b: 	.word 3 	# Número b.
-	.text
-	lw $t0, a 	# Carga el número a, es decir, $t0 = a.
-	lw $t1, b 	# Carga el número b, es decir, $t1 = b.
-loop: 	move $t2, $t1 	# mcd = b
-	div $t0, $t1 	# $hi = a mod b
-	mfhi $t3 	# mod = $hi
-	move $t0, $t1 	# a = b
-	move $t1, $t3 	# b = mod
-until: 	bnez $t3, loop  # ¿mod = 0? Si es falso te regresas a loop	
-end:    move $v0, $t2 	# Regresa resultado en v0
+#Máximo común divisor
+.data
+x: .word 60        #Definir x
+y: .word 45        #Definir y
+.text
+lw $t0, x          #Cargar t0 con x
+lw $t1, y          #Cargar t1 con y
+rem $t2, $t0, $t1  #Colocar en t2 el residuo de t0 con t1
+move $t3, $t1      #t3=t1
+etiq:              #etiqueta
+move $t4, $t2      #t4=t2
+rem $t2, $t3, $t4  #colocar en t2 el residuo de t3 con t4
+move $t3, $t4      #t3 = t4
+bgtz $t2, etiq     #si t2>0 saltar a etiq
+move $v0, $t3      #colocar resultado en v0

@@ -1,40 +1,41 @@
-
-# Programa que calcula la serie.
-
-	.data
-m: 	.word 13		# Número de iteraciones.
-num: 	.word 0			#Contador auxiliar en punto flotante.
-count:	.word 0			#Contador auxiliar en punto flotante.
-n: 	.word 0			#Contador auxiliar en punto flotante.
-uno: 	.word 1			#Constante en punto flotante.
-dos: 	.word 2			#Constante en punto flotante.
-cuatro: .word 4			#Constante en punto flotante.
-	.text
-	lw $t0, m		# t0 = m, es decir, m = número de iteraciones.
-	lwc1 $f0, num		# f0 = num, es decir, num = 0
-	add $t0, $t0, 1		# m = m + 1	
-	lwc1 $f1, n		# n = 0 (Contador flotante)
-	move $t1, $zero		# i = 0 (Contador entero)
-	lwc1 $f31, uno		# f31 = 1
-	neg.s $f30, $f31	# f30 = -1
-	lwc1 $f29, dos		# f29 = 2
-	lwc1 $f28, cuatro	# f28 = 4
-while: 	blt $t0, $t1, end 	# m < i, si es verdad salta a end
-	mov.s $f2, $f1		# count = n
-	div $t7, $t1, 2		# i mod 2
-	mfhi $t7		# temp = i mod 2
-if: 	beqz $t7, par  		# ¿count == 0?, si son iguales brinca a par.
-	mov.s $f2, $f31		# Si es impar, entonces count = 1
-	jal op			# Salta sin pasar por par.	
-par:	mov.s $f2, $f30		# Si es par, entonces count = -1
-op: 	mul.s $f3, $f2, $f30	# term1 = -1 * count
-	mul.s $f4, $f1, $f29	# term2 = n * 2
-	add.s $f5, $f4, $f31	# term3 = term2 + 1
-	div.s $f6, $f3, $f5	# term4 = term1 / term3
-	mul.s $f7, $f6, $f28	# term5 = term4 * 4
-	add.s $f8, $f7, $f0	# term6 = term5 + num
-	mov.s $f0, $f8		# num = term6
-	add.s $f1, $f1, $f31	# n++
-	addi $t1, $t1, 1	# i++
-	jal while
-end: 	#Resultado en $f0
+#serie
+.data 
+m: .word 1000		#numero de iteraciones 
+.text
+li $t0 , 0		# contador empieza en n = 0
+lw $t1 , m		# cargamos m en t1
+li $t2 , 2		# cargamos t2 = 2
+li $t3 , 1		# cargamos t3 = 1	
+li  $t4 , 4		# cargamos t4 = 4
+mtc1 $zero , $f0	# hacemos f0 = 0
+mtc1 $t3 , $f1 		# hacemos que f1 = t3 = 1
+mtc1 $t4 , $f7		# hacemos que f7 = t4 = 4
+loop:	
+bgt $t0 , $t1 , end	# si n > m salimos del loop
+div $t0 , $t2		# dividimos n/2
+mfhi $t5		# tomamos el residuo de la division anterior
+if:
+beqz $t5 , else 	# si el reiduo es cero saltamos al else 
+li $t5 , -1		# si n es impar t5 = -1
+j conti			# saltamos a conti para evitar el else
+else:
+li $t5 , 1		# si n es par t5 = 1
+conti:
+mult $t0 , $t2		# hacemos la operacion 2*n
+mflo $t6		# tomamos el resultado de la operacion en t6
+add $t6 , $t6 , $t3	# t6 = 2n+1
+mtc1 $t6 , $f3		# hacemos f3 = t6 = 2n+1
+div.s $f5 , $f1 , $f3	# f5 = ((-1)^n)/2n+1 
+if1:
+beq $t5 , -1 , else1	# si t5 = -1 saltamos a else1
+add.s $f0 , $f0 , $f5	# hacemos f0 = f0 + f5
+j salto			# saltamos para librarnos del else
+else1:	
+sub.s $f0 , $f0 , $f5	# hacemos f0 = f0 - f5 
+salto:	
+addi  $t0 , $t0 , 1	# incrementamos en 1 la n
+j loop			# saltamos al incio del loop 
+end:
+div.s $f9 , $f7 , $f1	# hacemos f9 = f7 / f1
+mul.s $f0 , $f0 , $f9	# multiplicamos por 4 lo que esta en f0
+nop			# termina el programa
