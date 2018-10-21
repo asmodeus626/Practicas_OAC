@@ -5,7 +5,7 @@
 	.data
 str:	.asciiz "Introduzca el nombre del archivo:\n"
 str_err:.asciiz "El archivo no existe.\n"
-buffer:	.data	16
+buffer:	.space	16
 	.text
 					### Imprimir cadena con llamada al sistema
 	la	$a0, str		# Cargar direccion de cadena
