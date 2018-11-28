@@ -36,10 +36,10 @@ ases:	.asciiz	"Direccion de memoria inaccesible.\n"
 	mfc0	$k0, $13		# Obtener la causa de la excepción del registro del coproc 0
 	andi	$k0, $k0, 0x7C		# Obtener solo la causa (sin excepciones pendientes) con la mascara 0x7C
 	
-	beq 	$k0, 0x24, vec_d	# Codigo Br Breakpoint ?
-	beq 	$k0, 0x30, vec_o	# Codigo Ov Desbordamiento aritmetico ?
-	beq 	$k0, 0x34, vec_t	# Codigo Tr Trap ?
-	beq 	$k0, 0x10, vec_a	# Codigo AdEL Load direccion no valida ?
+	beq 	$k0, 0x24, vec_d	# Codigo Br Breakpoint ? (36)
+	beq 	$k0, 0x30, vec_o	# Codigo Ov Desbordamiento aritmetico ? (48)
+	beq 	$k0, 0x34, vec_t	# Codigo Tr Trap ? (52)
+	beq 	$k0, 0x10, vec_a	# Codigo AdEL Load direccion no valida ? (16)
 	
 	la	$a0, 10			# Error no manejado por este manejador de excepciones, fin de la ejecucion
 	syscall
